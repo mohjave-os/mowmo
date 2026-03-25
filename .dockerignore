@@ -1,0 +1,10 @@
+.git/
+specs/
+.specify/
+.github/
+tests/
+.claude/
+*.md
+!mowmo/README.md
+CLAUDE.md
+.dockerignore
