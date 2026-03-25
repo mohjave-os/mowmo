@@ -51,6 +51,7 @@ RUN useradd -m -G wheel builduser && \
 
 USER builduser
 WORKDIR /home/builduser
+RUN rustup default stable
 RUN git clone https://aur.archlinux.org/paru.git && \
     cd paru && \
     makepkg -si --noconfirm && \
