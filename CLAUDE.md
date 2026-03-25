@@ -3,6 +3,7 @@
 Auto-generated from all feature plans. Last updated: 2026-03-25
 
 ## Active Technologies
+- Dockerfile (Arch Linux base), Bash (v1) for scripts + pacman (official repos), paru-bin (AUR helper), makepkg (002-slim-docker-image)
 
 - Bash (v1), shellcheck-compliant (`set -euo pipefail`) + pacman, paru, jq (for JSON output in Bash) (001-dockerfile-base-image)
 
@@ -22,6 +23,7 @@ tests/
 Bash (v1), shellcheck-compliant (`set -euo pipefail`): Follow standard conventions
 
 ## Recent Changes
+- 002-slim-docker-image: Added Dockerfile (Arch Linux base), Bash (v1) for scripts + pacman (official repos), paru-bin (AUR helper), makepkg
 
 - 001-dockerfile-base-image: Added Bash (v1), shellcheck-compliant (`set -euo pipefail`) + pacman, paru, jq (for JSON output in Bash)
 

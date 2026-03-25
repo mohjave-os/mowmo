@@ -160,7 +160,7 @@ Kernel sends SIGTERM. Driver has 10 seconds to finish in-progress work and exit.
 
 ### 5.1 Purpose
 
-The Dockerfile at the repo root produces an Arch Linux image containing all system packages Mohjave needs. The private mohjave repo's ISO build pipeline pulls `FROM` this image and layers on the compiled kernel binary, Tauri shell binary, mohwise model, and config files.
+The Dockerfile at the repo root produces an Arch Linux image containing all system packages Mohjave needs. The private mohjave repo's ISO build pipeline pulls `FROM` this image and layers on the compiled kernel binary, Electron desktop app, mohwise model, and config files.
 
 ### 5.2 Image Target
 
@@ -169,18 +169,18 @@ Interim: `ghcr.io/mohjave-os/mowmo:latest`
 
 ### 5.3 What the Image Contains
 
-- Arch Linux base (base, base-devel, linux, linux-firmware)
+- Arch Linux base (base, linux, linux-firmware)
 - Boot (grub, efibootmgr)
 - Networking (networkmanager, openssh)
-- Desktop (hyprland, xdg-desktop-portal-hyprland, sddm)
+- Wayland compositor (cage — single-window kiosk compositor for Electron desktop)
+- Login manager (sddm)
 - Audio (pipewire, pipewire-pulse, pipewire-alsa, wireplumber)
 - Graphics (mesa, vulkan-tools)
 - Fonts (ttf-jetbrains-mono, noto-fonts)
-- LLM inference (llama-cpp)
-- Tauri runtime (webkit2gtk-4.1)
-- Build tools (rustup, nodejs, npm)
-- System tools (grim, slurp, dunst, polkit, plymouth)
-- Installer (calamares)
+- LLM inference (llama.cpp-bin via AUR)
+- AUR support (paru — built from source, build tools removed in same Docker layer)
+- System services (polkit, plymouth)
+- Utilities (jq)
 
 ### 5.4 What the Image Does NOT Contain
 
