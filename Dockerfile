@@ -26,7 +26,6 @@ RUN pacman -Syu --noconfirm && \
         vulkan-tools \
         ttf-jetbrains-mono \
         noto-fonts \
-        llama-cpp \
         webkit2gtk-4.1 \
         rustup \
         nodejs \
@@ -36,7 +35,6 @@ RUN pacman -Syu --noconfirm && \
         dunst \
         polkit \
         plymouth \
-        calamares \
         jq && \
     pacman -Scc --noconfirm
 
@@ -58,6 +56,10 @@ RUN git clone https://aur.archlinux.org/paru.git && \
     makepkg -si --noconfirm && \
     cd .. && \
     rm -rf paru .cargo .cache
+
+# Install AUR packages (llama.cpp, calamares) via paru
+RUN paru -S --noconfirm llama.cpp calamares && \
+    rm -rf /home/builduser/.cache
 
 USER root
 WORKDIR /root
