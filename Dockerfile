@@ -31,6 +31,15 @@ RUN pacman -Syu --noconfirm && \
         # System services
         polkit \
         plymouth \
+        # Node.js + npm (Electron desktop runtime)
+        nodejs \
+        npm \
+        # Electron runtime deps
+        gtk3 \
+        nss \
+        alsa-lib \
+        at-spi2-core \
+        libdrm \
         # Utilities
         jq \
         curl \
