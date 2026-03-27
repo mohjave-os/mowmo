@@ -52,7 +52,6 @@ RUN git clone --depth 1 --branch ${LLAMA_CPP_TAG} \
         -DCMAKE_BUILD_TYPE=Release \
         -DGGML_STATIC=ON \
         -DGGML_NATIVE=OFF \
-        -DGGML_CPU_ALL_VARIANTS=ON \
         -DLLAMA_CURL=OFF \
         -DLLAMA_BUILD_TESTS=OFF \
         -DLLAMA_BUILD_EXAMPLES=OFF \
