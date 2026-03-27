@@ -32,7 +32,37 @@ RUN pacman -Syu --noconfirm && \
         polkit \
         plymouth \
         # Utilities
-        jq && \
+        jq \
+        curl \
+        # Build deps for llama.cpp (cleaned up after build)
+        cmake \
+        gcc \
+        make && \
+    pacman -Scc --noconfirm
+
+# Build llama.cpp from source as a static binary.
+# The AUR llama.cpp-bin package uses shared backend plugins which fail
+# in containers and minimal environments. A static build bundles all
+# CPU backends into the binary — no .so loading required.
+ARG LLAMA_CPP_TAG=b8508
+RUN git clone --depth 1 --branch ${LLAMA_CPP_TAG} \
+        https://github.com/ggml-org/llama.cpp.git /tmp/llama.cpp && \
+    cd /tmp/llama.cpp && \
+    cmake -B build \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DGGML_STATIC=ON \
+        -DGGML_NATIVE=OFF \
+        -DGGML_CPU_ALL_VARIANTS=ON \
+        -DLLAMA_CURL=OFF \
+        -DLLAMA_BUILD_TESTS=OFF \
+        -DLLAMA_BUILD_EXAMPLES=OFF \
+        -DLLAMA_BUILD_SERVER=ON && \
+    cmake --build build --target llama-server -j$(nproc) && \
+    cp build/bin/llama-server /usr/sbin/llama-server && \
+    chmod +x /usr/sbin/llama-server && \
+    cd / && rm -rf /tmp/llama.cpp && \
+    # Clean up build deps (keep gcc runtime — needed for libstdc++)
+    pacman -Rns --noconfirm cmake make && \
     pacman -Scc --noconfirm
 
 # Configure locale to en_US.UTF-8
@@ -46,8 +76,7 @@ RUN useradd -m -G wheel builduser && \
     echo "builduser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/builduser && \
     chmod 0440 /etc/sudoers.d/builduser
 
-# Install paru from source and AUR packages, then remove build tools
-# All in one layer so build dependencies don't bloat the final image
+# Install paru (for future AUR packages, without llama.cpp-bin)
 USER builduser
 WORKDIR /home/builduser
 RUN sudo pacman -S --noconfirm base-devel rustup && \
@@ -57,7 +86,6 @@ RUN sudo pacman -S --noconfirm base-devel rustup && \
     makepkg -si --noconfirm && \
     cd .. && \
     rm -rf paru .cargo .rustup && \
-    paru -S --noconfirm llama.cpp-bin && \
     rm -rf /home/builduser/.cache && \
     sudo pacman -Rns --noconfirm rustup base-devel && \
     sudo pacman -Scc --noconfirm
