@@ -59,7 +59,7 @@ RUN git clone --depth 1 --branch ${LLAMA_CPP_TAG} \
     cd /tmp/llama.cpp && \
     cmake -B build \
         -DCMAKE_BUILD_TYPE=Release \
-        -DGGML_STATIC=ON \
+        -DBUILD_SHARED_LIBS=OFF \
         -DGGML_NATIVE=OFF \
         -DLLAMA_CURL=OFF \
         -DLLAMA_BUILD_TESTS=OFF \
