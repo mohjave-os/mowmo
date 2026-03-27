@@ -43,6 +43,9 @@ RUN pacman -Syu --noconfirm && \
         # Utilities
         jq \
         curl \
+        # Build support (needed by ISO step to compile voice daemon against PipeWire)
+        pkgconf \
+        clang \
         # Build deps for llama.cpp (cleaned up after build)
         cmake \
         gcc \
