@@ -17,17 +17,21 @@ RUN pacman -Syu --noconfirm && \
         cage \
         # Login manager
         sddm \
-        # Audio
+        # Audio (libspa plugins are bundled in the pipewire package on Arch)
         pipewire \
         pipewire-pulse \
         pipewire-alsa \
         wireplumber \
+        # TTS phonemization backend (required by Kokoro-82M)
+        espeak-ng \
         # Graphics
         mesa \
         vulkan-tools \
         # Fonts
         ttf-jetbrains-mono \
         noto-fonts \
+        # NOTE: ttf-rubik (Mohjave's primary UI font) is not in official repos.
+        # Installed via AUR (paru -S ttf-rubik) during ISO build stage.
         # System services
         polkit \
         plymouth \

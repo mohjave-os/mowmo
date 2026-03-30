@@ -6,6 +6,13 @@ Package manager CLI and Arch Linux base image for [Mohjave OS](https://mohjave.c
 
 mowmo is the package management layer for Mohjave OS. It wraps `pacman` and `paru` (AUR) behind a unified CLI that outputs structured JSON by default, designed for consumption by the Mohjave kernel orchestrator.
 
+The Docker image ships everything needed for the Mohjave runtime:
+- **LLM inference** -- llama.cpp (`llama-server`), serving the mohwise-ankur-4b model (Qwen3.5-4B fine-tune)
+- **TTS** -- Kokoro-82M via ONNX Runtime, with `espeak-ng` for phonemization
+- **Voice input** -- whisper-rs, using PipeWire for audio capture
+- **Compositor** -- cage (single-window Wayland kiosk)
+- **Desktop** -- Electron (the sole GUI, launched inside cage)
+
 ## Quick Start
 
 ### Build the image
@@ -17,9 +24,10 @@ docker build -t mowmo:latest .
 ### Verify
 
 ```bash
-docker run --rm mowmo:latest pacman -Q hyprland
-docker run --rm mowmo:latest which llama-server
+docker run --rm mowmo:latest llama-server --version
+docker run --rm mowmo:latest pacman -Q cage pipewire wireplumber espeak-ng
 docker run --rm mowmo:latest paru --version
+docker run --rm mowmo:latest mowmo list --human | head -20
 ```
 
 ### Use mowmo
@@ -92,6 +100,24 @@ sdk/mcp-driver-spec.md  # MCP driver interface specification
 tests/integration/      # Integration tests (run inside Docker)
 LICENSE                 # GPL v3.0 + No-Competing-OS
 ```
+
+## System Packages
+
+The base image includes these package groups and why they exist:
+
+| Category | Packages | Purpose |
+|----------|----------|---------|
+| Compositor | `cage` | Single-window Wayland kiosk for the Electron desktop |
+| Display manager | `sddm` | Login manager |
+| Audio | `pipewire`, `pipewire-pulse`, `pipewire-alsa`, `wireplumber` | PipeWire audio stack (voice daemon uses PipeWire for capture/playback). SPA plugins (`libspa`) are bundled in `pipewire`. |
+| TTS | `espeak-ng` | Phonemization backend for Kokoro-82M TTS |
+| Graphics | `mesa`, `vulkan-tools` | GPU drivers and diagnostics |
+| Fonts | `ttf-jetbrains-mono`, `noto-fonts` | Monospace and fallback fonts. `ttf-rubik` (Mohjave primary UI font) is installed via AUR at ISO build time. |
+| Electron deps | `nodejs`, `npm`, `gtk3`, `nss`, `alsa-lib`, `at-spi2-core`, `libdrm` | Runtime dependencies for the Electron desktop shell |
+| LLM | `llama-server` (built from source, tag `b8508`) | Serves the mohwise-ankur-4b (Qwen3.5-4B fine-tune) model |
+| Build support | `pkgconf`, `clang` | Kept in image for ISO step to compile the voice daemon (whisper-rs, ONNX Runtime) against PipeWire headers |
+| System | `polkit`, `plymouth`, `networkmanager`, `openssh` | Privilege management, boot splash, networking |
+| Utilities | `jq`, `curl`, `git`, `vim`, `sudo` | General tooling |
 
 ## CI/CD
 
