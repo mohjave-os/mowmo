@@ -96,7 +96,7 @@ USER builduser
 WORKDIR /home/builduser
 RUN sudo pacman -S --noconfirm base-devel rustup && \
     rustup default stable && \
-    git clone https://aur.archlinux.org/paru.git && \
+    for i in 1 2 3 4 5; do git clone https://aur.archlinux.org/paru.git && break || sleep 5; done && \
     cd paru && \
     makepkg -si --noconfirm && \
     cd .. && \
